@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-history me-2"></i>Analysis History</h2>
+            <a href="{{ url_for('home_page') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Analysis
+            </a>
+        </div>
+
+        <div class="card analysis-card">
+            <div class="card-body">
+                {% if analyses.items %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="fas fa-file-alt me-1"></i>File Name</th>
+                                <th><i class="fas fa-tag me-1"></i>Assignment</th>
+                                <th><i class="fas fa-calendar me-1"></i>Date</th>
+                                <th><i class="fas fa-copy me-1"></i>Plagiarism</th>
+                                <th><i class="fas fa-robot me-1"></i>AI Score</th>
+                                <th><i class="fas fa-cog me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analysis in analyses.items %}
+                            <tr>
+                                <td>
+                                    <i class="fas fa-file-alt text-muted me-2"></i>
+                                    <span title="{{ analysis.filename }}">
+                                        {{ analysis.filename[:25] }}{% if analysis.filename|length > 25 %}...{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ analysis.assignment_name[:30] }}{% if analysis.assignment_name|length > 30 %}...{% endif %}</td>
+                                <td>{{ analysis.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if analysis.plagiarism_score > 70 else 'warning' if analysis.plagiarism_score > 40 else 'success' }} fs-6">
+                                        {{ "%.1f"|format(analysis.plagiarism_score) }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if analysis.ai_score > 70 else 'warning' if analysis.ai_score > 40 else 'success' }} fs-6">
+                                        {{ "%.1f"|format(analysis.ai_score) }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('show_results', analysis_id=analysis.analysis_id) }}"
+                                       class="btn btn-sm btn-outline-primary me-1" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if analyses.pages > 1 %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if analyses.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('show_history', page=analyses.prev_num) }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for page_num in analyses.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != analyses.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('show_history', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if analyses.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('show_history', page=analyses.next_num) }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No analyses found</h4>
+                    <p class="text-muted">Upload your first document to get started.</p>
+                    <a href="{{ url_for('home_page') }}" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Document
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

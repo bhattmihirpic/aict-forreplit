@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - Academic Integrity Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 mx-auto text-center">
+        <div class="card analysis-card">
+            <div class="card-body py-5">
+                <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                <h1 class="display-4 text-muted">404</h1>
+                <h4 class="mb-3">Page Not Found</h4>
+                <p class="text-muted mb-4">Sorry, the page you are looking for doesn't exist.</p>
+                <a href="{{ url_for('home_page') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}About - Academic Integrity Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card analysis-card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>About Academic Integrity Tool</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">A free, open-source solution for detecting plagiarism and AI-generated content in academic assignments.</p>
+
+                <h5 class="mt-4"><i class="fas fa-star me-2"></i>Features</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Plagiarism Detection:</strong> Advanced TF-IDF algorithms for text similarity analysis</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>AI Content Detection:</strong> Machine learning models to identify AI-generated text</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Multi-format Support:</strong> PDF, DOCX, and TXT files</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Detailed Reports:</strong> Comprehensive analysis with highlighted passages</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Privacy Focused:</strong> All processing done locally, no external data sharing</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Free Forever:</strong> No subscriptions, no limits, completely open source</li>
+                </ul>
+
+                <h5 class="mt-4"><i class="fas fa-shield-alt me-2"></i>Privacy & Security</h5>
+                <p>Your documents are processed locally and automatically deleted after analysis. No content is stored permanently or shared with third parties. This tool respects student privacy while helping maintain academic integrity.</p>
+
+                <h5 class="mt-4"><i class="fas fa-code me-2"></i>Open Source</h5>
+                <p>This tool is built with open-source technologies and can be customized for your institution's needs. The source code is available for review, modification, and improvement.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-tools me-1"></i>Technologies Used</h6>
+                        <ul class="small">
+                            <li>Python Flask (Web Framework)</li>
+                            <li>scikit-learn (Machine Learning)</li>
+                            <li>Transformers (AI Detection)</li>
+                            <li>PyMuPDF (PDF Processing)</li>
+                            <li>Bootstrap 5 (UI Framework)</li>
+                            <li>SQLite (Database)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-graduation-cap me-1"></i>Best Practices</h6>
+                        <ul class="small">
+                            <li>Use as educational tool, not punishment</li>
+                            <li>Review results before making decisions</li>
+                            <li>Consider context and proper citations</li>
+                            <li>Combine with manual review</li>
+                            <li>Maintain open dialogue with students</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Created for Educators:</strong> This tool was designed to help teachers maintain academic integrity while supporting student learning. It's most effective when used as part of a comprehensive academic integrity program.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

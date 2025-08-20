@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - {{ analysis.filename }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Header with file info -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-chart-line me-2"></i>Analysis Results</h2>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-file-alt me-1"></i> {{ analysis.filename }}
+                    <span class="mx-2">•</span>
+                    <i class="fas fa-calendar me-1"></i> {{ analysis.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+                </p>
+            </div>
+            <div>
+                <a href="{{ url_for('home_page') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus"></i> New Analysis
+                </a>
+                <a href="{{ url_for('show_history') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-history"></i> View All
+                </a>
+            </div>
+        </div>
+
+        <!-- Main score cards -->
+        <div class="row mb-4">
+            <!-- Plagiarism score card -->
+            <div class="col-md-6">
+                <div class="card analysis-card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-copy me-2"></i>Plagiarism Analysis
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fs-6">Similarity Score:</span>
+                            <span class="fs-3 similarity-{{ 'high' if plagiarism_result.overall_score > 70 else 'medium' if plagiarism_result.overall_score > 40 else 'low' }}">
+                                {{ "%.1f"|format(plagiarism_result.overall_score) }}%
+                            </span>
+                        </div>
+
+                        <!-- Progress bar -->
+                        <div class="progress progress-custom mb-3">
+                            <div class="progress-bar
+                                {{ 'bg-danger' if plagiarism_result.overall_score > 70 else 'bg-warning' if plagiarism_result.overall_score > 40 else 'bg-success' }}"
+                                style="width: {{ plagiarism_result.overall_score }}%">
+                            </div>
+                        </div>
+
+                        <!-- Additional info -->
+                        <div class="row text-center">
+                            <div class="col">
+                                <small class="text-muted d-block">Confidence Level</small>
+                                <strong class="text-capitalize">{{ plagiarism_result.confidence }}</strong>
+                            </div>
+                            <div class="col">
+                                <small class="text-muted d-block">Suspicious Parts</small>
+                                <strong>{{ plagiarism_result.suspicious_parts|length }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Interpretation -->
+                        <div class="mt-3">
+                            {% if plagiarism_result.overall_score > 70 %}
+                                <div class="alert alert-danger alert-sm mb-0">
+                                    <strong>High Risk:</strong> Significant similarities found. Manual review recommended.
+                                </div>
+                            {% elif plagiarism_result.overall_score > 40 %}
+                                <div class="alert alert-warning alert-sm mb-0">
+                                    <strong>Medium Risk:</strong> Some similarities detected. Check highlighted sections.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success alert-sm mb-0">
+                                    <strong>Low Risk:</strong> No significant plagiarism detected.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI detection score card -->
+            <div class="col-md-6">
+                <div class="card analysis-card border-info">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-robot me-2"></i>AI Content Detection
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fs-6">AI Probability:</span>
+                            <span class="fs-3 similarity-{{ 'high' if ai_result.ai_probability > 70 else 'medium' if ai_result.ai_probability > 40 else 'low' }}">
+                                {{ "%.1f"|format(ai_result.ai_probability) }}%
+                            </span>
+                        </div>
+
+                        <!-- Progress bar -->
+                        <div class="progress progress-custom mb-3">
+                            <div class="progress-bar
+                                {{ 'bg-danger' if ai_result.ai_probability > 70 else 'bg-warning' if ai_result.ai_probability > 40 else 'bg-success' }}"
+                                style="width: {{ ai_result.ai_probability }}%">
+                            </div>
+                        </div>
+
+                        <!-- Additional info -->
+                        <div class="row text-center">
+                            <div class="col">
+                                <small class="text-muted d-block">Confidence Level</small>
+                                <strong class="text-capitalize">{{ ai_result.confidence }}</strong>
+                            </div>
+                            <div class="col">
+                                <small class="text-muted d-block">Detection Method</small>
+                                <strong>{{ 'Smart Model' if ai_result.smart_model_working else 'Patterns' }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Interpretation -->
+                        <div class="mt-3">
+                            {% if ai_result.ai_probability > 70 %}
+                                <div class="alert alert-danger alert-sm mb-0">
+                                    <strong>High Risk:</strong> Text likely generated by AI. Review recommended.
+                                </div>
+                            {% elif ai_result.ai_probability > 40 %}
+                                <div class="alert alert-warning alert-sm mb-0">
+                                    <strong>Medium Risk:</strong> Some AI patterns detected. Check details below.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success alert-sm mb-0">
+                                    <strong>Low Risk:</strong> Text appears to be human-written.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document information -->
+        <div class="card analysis-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Document Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Assignment:</strong><br>
+                        <span class="text-muted">{{ analysis.assignment_name }}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>File Name:</strong><br>
+                        <span class="text-muted">{{ analysis.filename }}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Words:</strong><br>
+                        <span class="text-muted">{{ text_stats.get('total_words', 'N/A') }}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Characters:</strong><br>
+                        <span class="text-muted">{{ text_stats.get('total_characters', 'N/A') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suspicious plagiarism parts (if any) -->
+        {% if plagiarism_result.suspicious_parts %}
+        <div class="card analysis-card mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0 text-dark">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Suspicious Text Found ({{ plagiarism_result.suspicious_parts|length }} matches)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for part in plagiarism_result.suspicious_parts[:8] %}
+                <div class="alert alert-warning border-start border-warning border-4 mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong class="text-warning">
+                            <i class="fas fa-percentage"></i> {{ "%.1f"|format(part.similarity_percentage) }}% Match
+                        </strong>
+                        <small class="text-muted">Position: {{ part.position_in_text + 1 }}</small>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Suspicious text from submission:</strong><br>
+                        <em class="text-dark">"{{ part.sentence_from_submitted_text }}"</em>
+                    </div>
+                    <div>
+                        <strong>Similar text found in reference:</strong><br>
+                        <em class="text-muted">"{{ part.similar_sentence_found }}"</em>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if plagiarism_result.suspicious_parts|length > 8 %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Showing top 8 matches. {{ plagiarism_result.suspicious_parts|length - 8 }} additional matches found.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- AI detection clues (if any) -->
+        {% if ai_result.clues_found %}
+        <div class="card analysis-card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-search me-2"></i>AI Writing Patterns Detected
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for clue in ai_result.clues_found %}
+                <div class="alert alert-info border-start border-info border-4">
+                    <i class="fas fa-lightbulb me-2"></i>{{ clue }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Document preview -->
+        <div class="card analysis-card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>Document Preview
+                    <small class="text-muted">({{ analysis.original_text|length }} characters total)</small>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.4;">
+                    {{ analysis.original_text[:2000] }}
+                    {% if analysis.original_text|length > 2000 %}
+                        <div class="text-muted mt-3 text-center">
+                            <em>... (showing first 2000 characters - {{ analysis.original_text|length - 2000 }} more characters in full document) ...</em>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
